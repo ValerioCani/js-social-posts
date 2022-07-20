@@ -58,7 +58,7 @@ const posts = [
 
 const container = document.getElementById('container');
 
-posts.forEach((posted) => {
+posts.forEach((posted , number) => {
     let post = document.createElement('div');
     post.classList.add('post');
 
@@ -71,9 +71,11 @@ posts.forEach((posted) => {
                 let postMetaIcon = document.createElement('div');
                 postMetaIcon.classList.add('post-meta__icon');
                     
-                    let profilePic = document.createElement('img');
-                    profilePic.classList.add('profile-pic');
-                    postMetaIcon.append(profilePic);
+                    if( posted.author.image == null){
+                        postMetaIcon.innerHTML = '<div class="profile-pic-default"><span  alt="'+ posted.author.name +'">'+      +'</span></div>'
+                    } else{
+                        postMetaIcon.innerHTML = '<img class="profile-pic" src='+ posted.author.image +' alt="'+ posted.author.name +'">'
+                    };
 
                 postMeta.append(postMetaIcon);
                 
@@ -82,27 +84,35 @@ posts.forEach((posted) => {
                 
                     let postMetaAuthor = document.createElement('div');
                     postMetaData.classList.add('post-meta__author');
+                    
+                        postMetaData.innerHTML += posted.author.name;
+
                     postMetaData.append(postMetaAuthor);
                     
                     let postMetaTime = document.createElement('div');
                     postMetaData.classList.add('post-meta__time');
+
+                        postMetaData.innerHTML += posted.created;//mettere una funzione che restituisca in base alla data odierna quanto tempo fa e stato messo il post
+
                     postMetaData.append(postMetaTime);
                 
                 postMeta.append(postMetaData);
             
             postHeader.append(postMeta);
-           
+
         post.append(postHeader);
 
         let postText = document.createElement('div');
         postText.classList.add('post__text');
+
+            postText.innerHTML = posted.content;
+
         post.append(postText);
 
         let postImage = document.createElement('div');
         postImage.classList.add('post__image');
 
-            let imagePost = document.createElement('img');
-            postImage.append(imagePost);
+            postImage.innerHTML = '<img src='+ posted.media +' alt="">';
 
         post.append(postImage);
 
@@ -114,16 +124,33 @@ posts.forEach((posted) => {
             
                 let likesCTA = document.createElement('div');
                 likesCTA.classList.add('likes__cta');
+
+                likesCTA.innerHTML =   `<a class="like-button  js-like-button" href="javascript:likeButton(${number});" data-postid="${number + 1}">
+                                            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                                            <span class="like-button__label">Mi Piace</span>
+                                        </a>`
+
                 likes.append(likesCTA);
 
                 let likesCounter = document.createElement('div');
                 likesCounter.classList.add('likes__counter');
+
+                    likesCounter.innerHTML = 'Piace a <b id="like-counter-1" class="js-likes-counter">'+ posted.likes +'</b> persone'
+
                 likes.append(likesCounter);
 
             postFooter.append(likes);
-        
         
         post.append(postFooter);
         
     container.append(post);
 });
+
+
+
+function likeButton(number){
+    const aDom = document.querySelectorAll('a');
+    aDom[number].classList.add('like-button--liked');
+    let likedPosts = [];
+    likedPosts.push(number +1);
+};
